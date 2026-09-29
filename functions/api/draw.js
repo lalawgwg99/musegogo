@@ -1,8 +1,18 @@
-// GET /api/draw — 隨機發一組有效邀碼
+// GET /api/draw — 隨機發一組有效邀碼（UPT2ME 加權 40%）
+const BOOST_CODE = 'UPT2ME';
+const BOOST_RATE = 0.4;
 export async function onRequestGet({ env }) {
-  const row = await env.DB.prepare(
-    "SELECT code FROM codes WHERE status = 'active' ORDER BY RANDOM() LIMIT 1"
-  ).first();
+  let row = null;
+  if (Math.random() < BOOST_RATE) {
+    row = await env.DB.prepare(
+      "SELECT code FROM codes WHERE code = ? AND status = 'active'"
+    ).bind(BOOST_CODE).first();
+  }
+  if (!row) {
+    row = await env.DB.prepare(
+      "SELECT code FROM codes WHERE status = 'active' ORDER BY RANDOM() LIMIT 1"
+    ).first();
+  }
   if (!row) {
     return Response.json({ error: 'empty' }, { status: 404 });
   }
