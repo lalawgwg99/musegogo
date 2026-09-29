@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS codes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  code TEXT NOT NULL UNIQUE,
+  source TEXT NOT NULL DEFAULT 'seed',
+  status TEXT NOT NULL DEFAULT 'active',
+  draws INTEGER NOT NULL DEFAULT 0,
+  confirmed INTEGER NOT NULL DEFAULT 0,
+  used_up INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_codes_status ON codes (status);
