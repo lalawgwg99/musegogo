@@ -61,13 +61,19 @@
     <li>前往 <a href="https://muse.ai/join" target="_blank" rel="noopener">muse.ai/join</a> 完成註冊。</li>
     <li>註冊 48 小時內，到「設定」輸入邀碼兌換。</li>
   </ol>
+  <h2>48 小時兌換倒數</h2>
+  <p class="sub">輸入帳號建立時間，計算剩餘兌換時間。</p>
   <div class="card">
-    <div class="pool">兌換倒數（自你開始閱讀起算）</div>
-    <div class="timer" id="timer">48:00:00</div>
+    <div class="field">
+      <input type="datetime-local" id="createdAt" style="letter-spacing:0;text-transform:none;font-family:inherit;">
+      <button class="primary" id="calcBtn" style="flex:0 0 110px">計算</button>
+    </div>
+    <div class="timer" id="timer">--:--:--</div>
+    <div class="hint" id="timerHint">註冊後 48 小時內要到「設定」兌換。</div>
   </div>
 
-  <h2>分享你的邀碼</h2>
-  <p class="sub">上傳後立即進入公開池，大家都能領到。</p>
+  <h2>你的 6 位邀碼</h2>
+  <p class="sub">上傳後立即加入公開池，大家都能領到。</p>
   <div class="field">
     <input id="newCode" maxlength="6" placeholder="ABC123" autocomplete="off">
     <button class="primary" id="addBtn" style="flex:0 0 110px">上傳</button>
@@ -145,15 +151,30 @@ $('addBtn').onclick = async () => {
   }
 };
 
-// 48 小時倒數
-const end = Date.now() + 48 * 3600 * 1000;
-setInterval(() => {
-  let s = Math.max(0, Math.floor((end - Date.now()) / 1000));
+// 48 小時倒數：輸入帳號建立時間，計算剩餘兌換時間
+let deadline = 0;
+function tick() {
+  if (!deadline) return;
+  const s = Math.floor((deadline - Date.now()) / 1000);
+  if (s <= 0) {
+    $('timer').textContent = '00:00:00';
+    $('timerHint').textContent = '已超過 48 小時，兌換期限已過。';
+    deadline = 0;
+    return;
+  }
   const h = String(Math.floor(s / 3600)).padStart(2, '0');
   const m = String(Math.floor(s % 3600 / 60)).padStart(2, '0');
   const ss = String(s % 60).padStart(2, '0');
   $('timer').textContent = h + ':' + m + ':' + ss;
-}, 1000);
+}
+$('calcBtn').onclick = () => {
+  const v = $('createdAt').value;
+  if (!v) { $('timerHint').textContent = '請先輸入帳號建立時間。'; return; }
+  deadline = new Date(v).getTime() + 48 * 3600 * 1000;
+  $('timerHint').textContent = '剩餘兌換時間：';
+  tick();
+};
+setInterval(tick, 1000);
 
 draw();
 </script>
