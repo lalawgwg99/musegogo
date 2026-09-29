@@ -18,12 +18,9 @@ Cloudflare Pages + Functions + D1 的邀碼共用池：訪客上傳的邀碼直�
 2. **建 D1**：左側 D1 → Create database，取名 `muse-pool`。
 3. **綁定 D1**：進 Pages 專案 → Settings → Functions → D1 database bindings → Add binding，
    Variable name 填 `DB`，選 `muse-pool`，Save 後重新部署一次。
-4. **建表＋灌初始碼**（本機裝好 wrangler 並登入後）：
-   ```
-   npx wrangler d1 execute muse-pool --file=migrations/0001_schema.sql --remote
-   npx wrangler d1 execute muse-pool --file=migrations/0002_seed.sql --remote
-   ```
-   之後每次 push 到 GitHub，Pages 會自動重新部署。
+4. **資料表自動建立**：第一次有人開啟網站呼叫 API 時，`functions/_middleware.js` 會自動建表，
+   不需要手動跑 migration（`migrations/` 資料夾留作結構備查）。
+5. 之後每次 push 到 GitHub，Pages 會自動重新部署。
 
 ## 備註
 
