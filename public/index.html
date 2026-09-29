@@ -129,8 +129,8 @@ async function report(outcome, msg) {
     method: 'POST', headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ code: current, outcome })
   });
+  if (outcome === 'used_up') await draw();
   $('hint').textContent = msg;
-  if (outcome === 'used_up') draw();
 }
 $('addBtn').onclick = async () => {
   const v = $('newCode').value.trim().toUpperCase();
